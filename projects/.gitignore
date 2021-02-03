@@ -2,6 +2,11 @@
 __pycache__
 venv
 
+# Vagrant
+.vagrant/
+Vagrantfile
+vagrant/
+
 # OS generated files #
 ######################
 .DS_Store
