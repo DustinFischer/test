@@ -1,3 +1,6 @@
+SQLALchemy
+Flask
+Flask-Migrate
 babel
 python-dateutil==2.6.0
 flask-moment
