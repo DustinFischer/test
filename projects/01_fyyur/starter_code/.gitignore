@@ -19,6 +19,10 @@ node_modules
 ehthumbs.db
 Thumbs.db
 
+# distutils / setuptools
+*.egg-info/
+.eggs/
+
 # other
 dev/
 venv/
