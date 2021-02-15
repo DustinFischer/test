@@ -465,3 +465,6 @@ if not app.debug:
     file_handler.setLevel(logging.INFO)
     app.logger.addHandler(file_handler)
     app.logger.info('errors')
+
+
+# TODO: Add csrf handler see https://flask-wtf.readthedocs.io/en/stable/api.html

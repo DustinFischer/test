@@ -10,7 +10,6 @@ from .utils import env
 # App Config.
 # ----------------------------------------------------------------------------#
 app = Flask(__name__)
-# app.config.from_object(DevConfig)
 
 DEBUG = env('DEBUG', default=True)
 if DEBUG:
@@ -22,13 +21,17 @@ import fyyur.controllers
 
 moment = Moment(app)
 
+# TODO: Add csrf protection
+# https://flask-wtf.readthedocs.io/en/stable/api.html
 
 # ----------------------------------------------------------------------------#
 # Filters.
 # ----------------------------------------------------------------------------#
 
 def format_datetime(value, format='medium'):
+    # breakpoint()
     date = dateutil.parser.parse(value)
+    # breakpoint()
     if format == 'full':
         format = "EEEE MMMM, d, y 'at' h:mma"
     elif format == 'medium':
