@@ -11,6 +11,22 @@ MIGRATION_DIR = os.path.join('fyyur', 'migrations')
 migrate = Migrate(app, db, directory=MIGRATION_DIR)
 
 
+class IntEnum(db.TypeDecorator):
+    impl = db.Integer
+
+    def __init__(self, enumtype, *args, **kwargs):
+        super(IntEnum, self).__init__(*args, **kwargs)
+        self._enumtype = enumtype
+
+    def process_bind_param(self, value, dialect):
+        if isinstance(value, int):
+            return value
+        return value.value
+
+    def process_result_value(self, value, dialect):
+        return self._enumtype(value)
+
+
 class Venue(db.Model):
     __tablename__ = 'Venue'
 
