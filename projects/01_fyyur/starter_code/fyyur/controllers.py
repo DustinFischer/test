@@ -7,9 +7,9 @@ from logging import Formatter, FileHandler
 
 from flask import render_template, request, flash, redirect, url_for
 
-from fyyur import app
 from .forms import *
-
+from .models import *
+from .utils import flash_errors
 
 # ----------------------------------------------------------------------------#
 # Controllers.
@@ -156,6 +156,12 @@ def show_venue(venue_id):
 #  Create Venue
 #  ----------------------------------------------------------------
 
+def form_bulk_get(form, fields, keys=None):
+    if not isinstance(fields, list):
+        fields = [fields]
+    return {field: form.data.get(field) for field in fields}
+
+
 @app.route('/venues/create', methods=['GET'])
 def create_venue_form():
     form = VenueForm()
@@ -168,10 +174,26 @@ def create_venue_submission():
     # TODO: modify data to be the data object returned from db insertion
 
     # on successful db insert, flash success
-    flash('Venue ' + request.form['name'] + ' was successfully listed!')
-    # TODO: on unsuccessful db insert, flash an error instead.
-    # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
+    form = VenueForm(request.form)
+    # breakpoint()
+    if form.validate_on_submit():
+        # breakpoint()
+        try:
+            fields = ['name', 'city', 'state', 'address', 'phone', 'image_link', 'genres', 'facebook_link']
+            data = form_bulk_get(form, fields)
+            venue = Venue(**data)
+            db.session.add(venue)
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            flash('Failed to add Venue ' + request.form['name'], 'alert-danger')
+        finally:
+            db.session.close()
+    else:
+        flash('Form field error. Please fix and submit again.', 'alert-danger')
+        return render_template('forms/new_venue.html', form=form)
     # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
+    flash('Venue ' + request.form['name'] + ' was successfully listed!', 'alert-success')
     return render_template('pages/home.html')
 
 
@@ -465,6 +487,5 @@ if not app.debug:
     file_handler.setLevel(logging.INFO)
     app.logger.addHandler(file_handler)
     app.logger.info('errors')
-
 
 # TODO: Add csrf handler see https://flask-wtf.readthedocs.io/en/stable/api.html

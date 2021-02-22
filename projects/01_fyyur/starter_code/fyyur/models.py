@@ -1,8 +1,11 @@
 import os
 
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.dialects.postgresql import ARRAY
+
 from fyyur import app
+from . import enums
 
 db = SQLAlchemy(app)
 
@@ -12,13 +15,15 @@ migrate = Migrate(app, db, directory=MIGRATION_DIR)
 
 
 class IntEnum(db.TypeDecorator):
-    impl = db.Integer
+    impl = db.SmallInteger
 
     def __init__(self, enumtype, *args, **kwargs):
         super(IntEnum, self).__init__(*args, **kwargs)
         self._enumtype = enumtype
 
     def process_bind_param(self, value, dialect):
+        if isinstance(value, str):
+            return int(value)
         if isinstance(value, int):
             return value
         return value.value
@@ -28,23 +33,21 @@ class IntEnum(db.TypeDecorator):
 
 
 class Venue(db.Model):
-    __tablename__ = 'Venue'
+    __tablename__ = 'venue'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
+    state = db.Column(IntEnum(enums.State))
     address = db.Column(db.String(120))
     phone = db.Column(db.String(120))
+    genres = db.Column(ARRAY(IntEnum(enums.Genre)))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
 
-    # TODO: Add genre enum field
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
-
 
 class Artist(db.Model):
-    __tablename__ = 'Artist'
+    __tablename__ = 'artist'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)

@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import IntEnum
 
 
-class ChoiceEnum(Enum):
+class ChoiceEnum(IntEnum):
     __labels__ = {}
 
     @property

@@ -44,7 +44,7 @@ class VenueForm(Form):
     genres = SelectMultipleField(
         # TODO implement enum restriction
         'genres', validators=[DataRequired()],
-        choices=enums.Genre.choices(),
+        choices=enums.Genre.choices(), coerce=int,
     )
     facebook_link = StringField(
         'facebook_link', validators=[URL()]
@@ -66,9 +66,7 @@ class ArtistForm(Form):
         # TODO implement validation logic for state
         'phone'
     )
-    image_link = StringField(
-        'image_link'
-    )
+
     genres = SelectMultipleField(
         # TODO implement enum restriction
         'genres', validators=[DataRequired()],
@@ -77,6 +75,9 @@ class ArtistForm(Form):
     facebook_link = StringField(
         # TODO implement enum restriction
         'facebook_link', validators=[URL()]
+    )
+    image_link = StringField(
+        'image_link'
     )
 
 # TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM
