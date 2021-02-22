@@ -1,4 +1,5 @@
 from enum import IntEnum
+from us import states
 
 
 class ChoiceEnum(IntEnum):
@@ -68,7 +69,7 @@ class State(ChoiceEnum):
 
     @property
     def label(self):
-        return self.name
+        return str(states.lookup(self.name))
 
 
 class Genre(ChoiceEnum):

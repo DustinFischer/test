@@ -9,7 +9,7 @@ from flask import render_template, request, flash, redirect, url_for
 
 from .forms import *
 from .models import *
-from .utils import flash_errors
+
 
 # ----------------------------------------------------------------------------#
 # Controllers.
@@ -48,7 +48,33 @@ def venues():
             "num_upcoming_shows": 0,
         }]
     }]
-    return render_template('pages/venues.html', areas=data);
+
+    # Find unique combinations of states existing in database
+    distinct_states = db.session.query(Venue).distinct(Venue.state) \
+        .with_entities(Venue.state) \
+        .order_by(Venue.state).all()
+
+    # Compile context
+    data = []
+    for state, in distinct_states:
+        venues = Venue.query.filter_by(state=state).order_by(Venue.city)
+        cities = {}
+        for venue in venues:
+            if venue.city not in cities:
+                cities[venue.city] = {
+                    'city': venue.city,
+                    'state': venue.state.label,
+                    'venues': []
+                }
+
+            cities[venue.city]['venues'].append({
+                'id': venue.id,
+                'name': venue.name,
+                'num_upcoming_shows': 1  # TODO: Implement
+            })
+        data.append(*[*cities.values()])
+
+    return render_template('pages/venues.html', areas=data)
 
 
 @app.route('/venues/search', methods=['POST'])
