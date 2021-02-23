@@ -1,8 +1,8 @@
 from datetime import datetime
 
 from flask_wtf import Form
-from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField
-from wtforms.validators import DataRequired, URL
+from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
+from wtforms.validators import DataRequired, URL, Optional
 
 from . import enums
 
@@ -22,48 +22,35 @@ class ShowForm(Form):
 
 
 class VenueForm(Form):
-    name = StringField(
-        'name', validators=[DataRequired()]
-    )
-    city = StringField(
-        'city', validators=[DataRequired()]
-    )
+    name = StringField('name', validators=[DataRequired()])
+    city = StringField('city', validators=[DataRequired()])
     state = SelectField(
         'state', validators=[DataRequired()],
         choices=enums.State.choices()
     )
-    address = StringField(
-        'address', validators=[DataRequired()]
-    )
-    phone = StringField(
-        'phone', validators=[DataRequired()]
-    )
-    image_link = StringField(
-        'image_link'
-    )
+    address = StringField('address', validators=[DataRequired()])
+    phone = StringField('phone', validators=[DataRequired()])
+
     genres = SelectMultipleField(
-        # TODO implement enum restriction
         'genres', validators=[DataRequired()],
         choices=enums.Genre.choices(), coerce=int,
     )
-    facebook_link = StringField(
-        'facebook_link', validators=[URL()]
-    )
+    seeking_talent = BooleanField('seeking_talent', default=True)
+    seeking_talent_description = StringField('talent_description', validators=[Optional()])
+
+    website = StringField('website', validators=[Optional(), URL()])
+    facebook_link = StringField('facebook_link', validators=[Optional(), URL()])
+    image_link = StringField('image_link', validators=[Optional(), URL()])
 
 
 class ArtistForm(Form):
-    name = StringField(
-        'name', validators=[DataRequired()]
-    )
-    city = StringField(
-        'city', validators=[DataRequired()]
-    )
+    name = StringField('name', validators=[DataRequired()])
+    city = StringField('city', validators=[DataRequired()])
     state = SelectField(
         'state', validators=[DataRequired()],
         choices=enums.State.choices()
     )
-    phone = StringField(
-        # TODO implement validation logic for state
+    phone = StringField(  # TODO implement validation logic for state
         'phone'
     )
 
@@ -72,12 +59,12 @@ class ArtistForm(Form):
         'genres', validators=[DataRequired()],
         choices=enums.Genre.choices()
     )
+
     facebook_link = StringField(
-        # TODO implement enum restriction
-        'facebook_link', validators=[URL()]
+        'facebook_link', validators=[Optional(), URL()]
     )
     image_link = StringField(
-        'image_link'
+        'image_link', validators=[Optional(), URL()]
     )
 
 # TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM

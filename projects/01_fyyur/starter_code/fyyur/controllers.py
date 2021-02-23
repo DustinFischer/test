@@ -203,22 +203,27 @@ def create_venue_submission():
     form = VenueForm(request.form)
     # breakpoint()
     if form.validate_on_submit():
-        # breakpoint()
+        exception = None
         try:
-            fields = ['name', 'city', 'state', 'address', 'phone', 'image_link', 'genres', 'facebook_link']
+            fields = ['name', 'city', 'state',
+                      'address', 'phone',
+                      'genres', 'seeking_talent', 'seeking_talent_description',
+                      'website', 'image_link', 'facebook_link']
             data = form_bulk_get(form, fields)
             venue = Venue(**data)
             db.session.add(venue)
             db.session.commit()
-        except Exception:
+        except Exception as e:
             db.session.rollback()
-            flash('Failed to add Venue ' + request.form['name'], 'alert-danger')
+            exception = e
         finally:
             db.session.close()
+
+        if exception:
+            raise exception
     else:
         flash('Form field error. Please fix and submit again.', 'alert-danger')
         return render_template('forms/new_venue.html', form=form)
-    # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
     flash('Venue ' + request.form['name'] + ' was successfully listed!', 'alert-success')
     return render_template('pages/home.html')
 

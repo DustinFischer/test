@@ -36,14 +36,17 @@ class Venue(db.Model):
     __tablename__ = 'venue'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    city = db.Column(db.String(120))
-    state = db.Column(IntEnum(enums.State))
+    name = db.Column(db.String, nullable=False)
+    city = db.Column(db.String(120), nullable=False)
+    state = db.Column(IntEnum(enums.State), nullable=False)
     address = db.Column(db.String(120))
     phone = db.Column(db.String(120))
     genres = db.Column(ARRAY(IntEnum(enums.Genre)))
+    website = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
+    seeking_talent = db.Column(db.Boolean, default=False)
+    seeking_talent_description = db.Column(db.String(500))
 
 
 class Artist(db.Model):
