@@ -39,13 +39,13 @@ class Venue(db.Model):
     name = db.Column(db.String, nullable=False)
     city = db.Column(db.String(120), nullable=False)
     state = db.Column(IntEnum(enums.State), nullable=False)
-    address = db.Column(db.String(120))
-    phone = db.Column(db.String(120))
+    address = db.Column(db.String(120), nullable=False)
+    phone = db.Column(db.String(120), nullable=False)
     genres = db.Column(ARRAY(IntEnum(enums.Genre)))
     website = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-    seeking_talent = db.Column(db.Boolean, default=False)
+    seeking_talent = db.Column(db.Boolean, default=False, nullable=False)
     seeking_talent_description = db.Column(db.String(500))
 
 
