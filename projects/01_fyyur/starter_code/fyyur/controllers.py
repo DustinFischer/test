@@ -22,6 +22,38 @@ def index():
 
 #  Venues
 #  ----------------------------------------------------------------
+@app.route('/venues')
+def venues():
+    #  TODO: num_shows should be aggregated based on number of upcoming shows per venue.
+
+    # Find unique combinations of states existing in database
+    distinct_states = db.session.query(Venue).distinct(Venue.state) \
+        .with_entities(Venue.state) \
+        .order_by(Venue.state).all()
+
+    # Compile context
+    # Loop by state to avoid excessive db hits with unique (state, city) combos
+    data = []
+    for state, in distinct_states:
+        venues = Venue.query.filter_by(state=state).order_by(Venue.city)
+        cities = {}
+        for venue in venues:
+            if venue.city not in cities:
+                cities[venue.city] = {
+                    'city': venue.city,
+                    'state': venue.state.label,
+                    'venues': []
+                }
+
+            cities[venue.city]['venues'].append({
+                'id': venue.id,
+                'name': venue.name,
+                'num_upcoming_shows': 1  # TODO: Implement
+            })
+        data.extend(cities.values())
+    return render_template('pages/venues.html', areas=data)
+
+
 @app.route('/venues/create', methods=['GET', 'POST'])
 def create_venue():
     form = VenueForm(request.form)
@@ -158,38 +190,6 @@ def edit_venue(venue_id):
         return redirect(url_for('show_venue', venue_id=venue_id))
 
     return render_template('forms/change_venue.html', form=form, venue=venue)
-
-
-@app.route('/venues')
-def venues():
-    #  TODO: num_shows should be aggregated based on number of upcoming shows per venue.
-
-    # Find unique combinations of states existing in database
-    distinct_states = db.session.query(Venue).distinct(Venue.state) \
-        .with_entities(Venue.state) \
-        .order_by(Venue.state).all()
-
-    # Compile context
-    # Loop by state to avoid excessive db hits with unique (state, city) combos
-    data = []
-    for state, in distinct_states:
-        venues = Venue.query.filter_by(state=state).order_by(Venue.city)
-        cities = {}
-        for venue in venues:
-            if venue.city not in cities:
-                cities[venue.city] = {
-                    'city': venue.city,
-                    'state': venue.state.label,
-                    'venues': []
-                }
-
-            cities[venue.city]['venues'].append({
-                'id': venue.id,
-                'name': venue.name,
-                'num_upcoming_shows': 1  # TODO: Implement
-            })
-        data.extend(cities.values())
-    return render_template('pages/venues.html', areas=data)
 
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
