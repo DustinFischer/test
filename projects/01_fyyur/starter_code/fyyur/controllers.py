@@ -22,55 +22,27 @@ def index():
 
 #  Venues
 #  ----------------------------------------------------------------
+@app.route('/venues/create', methods=['GET', 'POST'])
+def create_venue():
+    form = VenueForm(request.form)
 
-@app.route('/venues')
-def venues():
-    # TODO: replace with real venues data.
-    #       num_shows should be aggregated based on number of upcoming shows per venue.
+    # Handle create form POST submission
+    if form.is_submitted():
+        if form.validate_on_submit():
+            with db_session() as session:
+                fields = ['name', 'city', 'state', 'address', 'phone', 'genres', 'seeking_talent',
+                          'seeking_talent_description', 'website', 'image_link', 'facebook_link']
+                data = {field: form.data.get(field) for field in fields}
+                venue = Venue(**data)
+                session.add(venue)
+        else:
+            flash('Form field error. Please fix and submit again.', 'alert-danger')
+            return render_template('forms/change_venue.html', form=form)
+        flash('Venue ' + request.form['name'] + ' was successfully listed!', 'alert-success')
+        return render_template('pages/home.html')
 
-    # Find unique combinations of states existing in database
-    distinct_states = db.session.query(Venue).distinct(Venue.state) \
-        .with_entities(Venue.state) \
-        .order_by(Venue.state).all()
-
-    # Compile context
-    # Loop by state to avoid excessive db hits with unique (state, city) combos
-    data = []
-    for state, in distinct_states:
-        venues = Venue.query.filter_by(state=state).order_by(Venue.city)
-        cities = {}
-        for venue in venues:
-            if venue.city not in cities:
-                cities[venue.city] = {
-                    'city': venue.city,
-                    'state': venue.state.label,
-                    'venues': []
-                }
-
-            cities[venue.city]['venues'].append({
-                'id': venue.id,
-                'name': venue.name,
-                'num_upcoming_shows': 1  # TODO: Implement
-            })
-        data.extend(cities.values())
-    return render_template('pages/venues.html', areas=data)
-
-
-@app.route('/venues/search', methods=['POST'])
-def search_venues():
-    # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
-    # seach for Hop should return "The Musical Hop".
-    # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
-    response = {
-        "count": 1,
-        "data": [{
-            "id": 2,
-            "name": "The Dueling Pianos Bar",
-            "num_upcoming_shows": 0,
-        }]
-    }
-    return render_template('pages/search_venues.html', results=response,
-                           search_term=request.form.get('search_term', ''))
+    # Return empty create form
+    return render_template('forms/change_venue.html', form=form, add=True)
 
 
 @app.route('/venues/<int:venue_id>')
@@ -156,7 +128,7 @@ def show_venue(venue_id):
     # }
     # data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
 
-    venue = Venue.query.get(venue_id)  # TODO: 404 redirect
+    venue = Venue.query.get(venue_id) or abort(404)
     data = {
         'id': venue.id,
         'name': venue.name,
@@ -171,31 +143,7 @@ def show_venue(venue_id):
         'seeking_description': venue.seeking_talent_description,
         # TODO: Add Upcoming shows
     }
-
     return render_template('pages/show_venue.html', venue=data)
-
-
-@app.route('/venues/create', methods=['GET', 'POST'])
-def create_venue():
-    form = VenueForm(request.form)
-
-    # Handle create form POST submission
-    if form.is_submitted():
-        if form.validate_on_submit():
-            with db_session() as session:
-                fields = ['name', 'city', 'state', 'address', 'phone', 'genres', 'seeking_talent',
-                          'seeking_talent_description', 'website', 'image_link', 'facebook_link']
-                data = {field: form.data.get(field) for field in fields}
-                venue = Venue(**data)
-                session.add(venue)
-        else:
-            flash('Form field error. Please fix and submit again.', 'alert-danger')
-            return render_template('forms/change_venue.html', form=form)
-        flash('Venue ' + request.form['name'] + ' was successfully listed!', 'alert-success')
-        return render_template('pages/home.html')
-
-    # Return empty create form
-    return render_template('forms/change_venue.html', form=form, add=True)
 
 
 @app.route('/venues/<int:venue_id>/edit', methods=['GET', 'POST'])
@@ -212,11 +160,36 @@ def edit_venue(venue_id):
     return render_template('forms/change_venue.html', form=form, venue=venue)
 
 
-@app.route('/venues/<int:venue_id>/edit', methods=['POST'])
-def edit_venue_submission(venue_id):
-    # TODO: take values from the form submitted, and update existing
-    # venue record with ID <venue_id> using the new attributes
-    return redirect(url_for('show_venue', venue_id=venue_id))
+@app.route('/venues')
+def venues():
+    #  TODO: num_shows should be aggregated based on number of upcoming shows per venue.
+
+    # Find unique combinations of states existing in database
+    distinct_states = db.session.query(Venue).distinct(Venue.state) \
+        .with_entities(Venue.state) \
+        .order_by(Venue.state).all()
+
+    # Compile context
+    # Loop by state to avoid excessive db hits with unique (state, city) combos
+    data = []
+    for state, in distinct_states:
+        venues = Venue.query.filter_by(state=state).order_by(Venue.city)
+        cities = {}
+        for venue in venues:
+            if venue.city not in cities:
+                cities[venue.city] = {
+                    'city': venue.city,
+                    'state': venue.state.label,
+                    'venues': []
+                }
+
+            cities[venue.city]['venues'].append({
+                'id': venue.id,
+                'name': venue.name,
+                'num_upcoming_shows': 1  # TODO: Implement
+            })
+        data.extend(cities.values())
+    return render_template('pages/venues.html', areas=data)
 
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
@@ -227,6 +200,23 @@ def delete_venue(venue_id):
     # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
     # clicking that button delete it from the db then redirect the user to the homepage
     return None
+
+
+@app.route('/venues/search', methods=['POST'])
+def search_venues():
+    # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
+    # seach for Hop should return "The Musical Hop".
+    # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
+    response = {
+        "count": 1,
+        "data": [{
+            "id": 2,
+            "name": "The Dueling Pianos Bar",
+            "num_upcoming_shows": 0,
+        }]
+    }
+    return render_template('pages/search_venues.html', results=response,
+                           search_term=request.form.get('search_term', ''))
 
 
 #  Artists
