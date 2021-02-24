@@ -1,4 +1,5 @@
 import os
+from contextlib import contextmanager
 
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -8,6 +9,21 @@ from fyyur import app
 from . import enums
 
 db = SQLAlchemy(app)
+
+
+@contextmanager
+def db_session():
+    """Provide a transactional scope around a series of operations."""
+    session = db.session
+    try:
+        yield session
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
 
 # Instantiate Migrate
 MIGRATION_DIR = os.path.join('fyyur', 'migrations')
