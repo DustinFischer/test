@@ -1,7 +1,9 @@
 {% extends 'layouts/main.html' %}
 {% from 'layouts/macros.html' import field_errors %}
 
-{% block title %}New Venue{% endblock %}
+{% block title %}
+    {% if add %}New Venue{% else %}Edit Venue{% endif %}
+{% endblock %}
 
 {% block content %}
     <div class="form-wrapper">
@@ -41,7 +43,7 @@
             <div class="form-group">
                 <label for="genres">Genres</label>
                 <small>Ctrl+Click to select multiple</small>
-                {{ form.genres(class_ = 'form-control', placeholder='Genres, separated by commas', autofocus = true) }}
+                {{ form.genres(class_ = ' form-control', placeholder='Genres, separated by commas', autofocus = true) }}
             </div>
             <div class="form-group">
                 <label for="seeking_talent">Seeking talent? {{ form.seeking_talent }}</label>
