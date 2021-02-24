@@ -62,10 +62,8 @@ def create_venue():
     if form.is_submitted():
         if form.validate_on_submit():
             with db_session() as session:
-                fields = ['name', 'city', 'state', 'address', 'phone', 'genres', 'seeking_talent',
-                          'seeking_talent_description', 'website', 'image_link', 'facebook_link']
-                data = {field: form.data.get(field) for field in fields}
-                venue = Venue(**data)
+                venue = Venue()
+                form.populate_obj(venue)
                 session.add(venue)
         else:
             flash('Form field error. Please fix and submit again.', 'alert-danger')
