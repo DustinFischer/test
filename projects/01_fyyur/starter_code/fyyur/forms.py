@@ -36,7 +36,7 @@ class VenueForm(Form):
         choices=enums.Genre.choices(), coerce=int,
     )
     seeking_talent = BooleanField('seeking_talent', default=True)
-    seeking_talent_description = StringField('talent_description', validators=[Optional()])
+    seeking_description = StringField('seeking_description', validators=[Optional()])
 
     website = StringField('website', validators=[Optional(), URL()])
     facebook_link = StringField('facebook_link', validators=[Optional(), URL()])

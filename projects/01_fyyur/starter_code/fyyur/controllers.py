@@ -170,7 +170,7 @@ def show_venue(venue_id):
         'website': venue.website,
         'facebook_link': venue.facebook_link,
         'seeking_talent': venue.seeking_talent,
-        'seeking_description': venue.seeking_talent_description,
+        'seeking_description': venue.seeking_description,
         # TODO: Add Upcoming shows
     }
     return render_template('pages/show_venue.html', venue=data)
