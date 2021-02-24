@@ -5,7 +5,7 @@
 import logging
 from logging import Formatter, FileHandler
 
-from flask import render_template, request, flash, redirect, url_for
+from flask import render_template, request, flash, redirect, url_for, abort
 
 from .forms import *
 from .models import *
@@ -38,7 +38,6 @@ def venues():
     data = []
     for state, in distinct_states:
         venues = Venue.query.filter_by(state=state).order_by(Venue.city)
-
         cities = {}
         for venue in venues:
             if venue.city not in cities:
@@ -53,8 +52,7 @@ def venues():
                 'name': venue.name,
                 'num_upcoming_shows': 1  # TODO: Implement
             })
-        data.append(*[*cities.values()])
-
+        data.extend(cities.values())
     return render_template('pages/venues.html', areas=data)
 
 
@@ -177,54 +175,48 @@ def show_venue(venue_id):
     return render_template('pages/show_venue.html', venue=data)
 
 
-#  ----------------------------------------------------------------
-#  Create Venue
-#  ----------------------------------------------------------------
-
-def form_bulk_get(form, fields, keys=None):
-    if not isinstance(fields, list):
-        fields = [fields]
-    return {field: form.data.get(field) for field in fields}
-
-
-@app.route('/venues/create', methods=['GET'])
-def create_venue_form():
-    form = VenueForm()
-    return render_template('forms/new_venue.html', form=form)
-
-
-@app.route('/venues/create', methods=['POST'])
-def create_venue_submission():
-    # TODO: insert form data as a new Venue record in the db, instead
-    # TODO: modify data to be the data object returned from db insertion
-
-    # on successful db insert, flash success
+@app.route('/venues/create', methods=['GET', 'POST'])
+def create_venue():
     form = VenueForm(request.form)
-    if form.validate_on_submit():
-        exception = None
-        try:
-            fields = ['name', 'city', 'state',
-                      'address', 'phone',
-                      'genres', 'seeking_talent', 'seeking_talent_description',
-                      'website', 'image_link', 'facebook_link']
-            data = form_bulk_get(form, fields)
-            venue = Venue(**data)
-            db.session.add(venue)
-            db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            exception = e
-        finally:
-            db.session.close()
 
-        # Enforce a server 500 error redirect (in non DEBUG)
-        if exception:
-            raise exception
-    else:
-        flash('Form field error. Please fix and submit again.', 'alert-danger')
-        return render_template('forms/new_venue.html', form=form)
-    flash('Venue ' + request.form['name'] + ' was successfully listed!', 'alert-success')
-    return render_template('pages/home.html')
+    # Handle create form POST submission
+    if form.is_submitted():
+        if form.validate_on_submit():
+            with db_session() as session:
+                fields = ['name', 'city', 'state', 'address', 'phone', 'genres', 'seeking_talent',
+                          'seeking_talent_description', 'website', 'image_link', 'facebook_link']
+                data = {field: form.data.get(field) for field in fields}
+                venue = Venue(**data)
+                session.add(venue)
+        else:
+            flash('Form field error. Please fix and submit again.', 'alert-danger')
+            return render_template('forms/change_venue.html', form=form)
+        flash('Venue ' + request.form['name'] + ' was successfully listed!', 'alert-success')
+        return render_template('pages/home.html')
+
+    # Return empty create form
+    return render_template('forms/change_venue.html', form=form, add=True)
+
+
+@app.route('/venues/<int:venue_id>/edit', methods=['GET', 'POST'])
+def edit_venue(venue_id):
+    venue = Venue.query.get(venue_id) or abort(404)
+    form = VenueForm(obj=venue)
+
+    if form.validate_on_submit():
+        with db_session() as session:
+            form.populate_obj(venue)
+            session.add(venue)
+        return redirect(url_for('show_venue', venue_id=venue_id))
+
+    return render_template('forms/change_venue.html', form=form, venue=venue)
+
+
+@app.route('/venues/<int:venue_id>/edit', methods=['POST'])
+def edit_venue_submission(venue_id):
+    # TODO: take values from the form submitted, and update existing
+    # venue record with ID <venue_id> using the new attributes
+    return redirect(url_for('show_venue', venue_id=venue_id))
 
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
@@ -380,33 +372,6 @@ def edit_artist_submission(artist_id):
 
     return redirect(url_for('show_artist', artist_id=artist_id))
 
-
-@app.route('/venues/<int:venue_id>/edit', methods=['GET'])
-def edit_venue(venue_id):
-    form = VenueForm()
-    venue = {
-        "id": 1,
-        "name": "The Musical Hop",
-        "genres": ["Jazz", "Reggae", "Swing", "Classical", "Folk"],
-        "address": "1015 Folsom Street",
-        "city": "San Francisco",
-        "state": "CA",
-        "phone": "123-123-1234",
-        "website": "https://www.themusicalhop.com",
-        "facebook_link": "https://www.facebook.com/TheMusicalHop",
-        "seeking_talent": True,
-        "seeking_description": "We are on the lookout for a local artist to play every two weeks. Please call us.",
-        "image_link": "https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60"
-    }
-    # TODO: populate form with values from venue with ID <venue_id>
-    return render_template('forms/edit_venue.html', form=form, venue=venue)
-
-
-@app.route('/venues/<int:venue_id>/edit', methods=['POST'])
-def edit_venue_submission(venue_id):
-    # TODO: take values from the form submitted, and update existing
-    # venue record with ID <venue_id> using the new attributes
-    return redirect(url_for('show_venue', venue_id=venue_id))
 
 
 #  Create Artist
