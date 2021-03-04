@@ -27,9 +27,12 @@ moment = Moment(app)
 # ----------------------------------------------------------------------------#
 
 def format_datetime(value, format='medium'):
-    # breakpoint()
-    date = dateutil.parser.parse(value)
-    # breakpoint()
+    # Allow datetime objects
+    if isinstance(value, str):
+        date = dateutil.parser.parse(value)
+    else:
+        date = value
+
     if format == 'full':
         format = "EEEE MMMM, d, y 'at' h:mma"
     elif format == 'medium':
