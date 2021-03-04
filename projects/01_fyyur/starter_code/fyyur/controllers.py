@@ -6,6 +6,7 @@ import logging
 from logging import Formatter, FileHandler
 
 from flask import render_template, request, flash, redirect, url_for, abort
+from flask_wtf.csrf import CSRFError
 
 from .forms import *
 from .models import *
@@ -318,6 +319,12 @@ def server_error(error):
     return render_template('errors/500.html'), 500
 
 
+@app.errorhandler(CSRFError)
+def csrf_error(reason):
+    breakpoint()
+    return render_template('errors/csrf.html', reason=reason)
+
+
 if not app.debug:
     file_handler = FileHandler('error.log')
     file_handler.setFormatter(
@@ -328,4 +335,5 @@ if not app.debug:
     app.logger.addHandler(file_handler)
     app.logger.info('errors')
 
-# TODO: Add csrf handler see https://flask-wtf.readthedocs.io/en/stable/api.html
+
+
