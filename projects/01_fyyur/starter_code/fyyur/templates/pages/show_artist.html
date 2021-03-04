@@ -6,16 +6,19 @@
 		<h1 class="monospace">
 			{{ artist.name }}
 		</h1>
+        <p class="subtitle">
+            <a href="{{ url_for('edit_artist', artist_id=artist.id) }}">Edit profile</a>
+        </p>
 		<p class="subtitle">
 			ID: {{ artist.id }}
 		</p>
 		<div class="genres">
 			{% for genre in artist.genres %}
-			<span class="genre">{{ genre }}</span>
+			<span class="genre">{{ genre.label }}</span>
 			{% endfor %}
 		</div>
 		<p>
-			<i class="fas fa-globe-americas"></i> {{ artist.city }}, {{ artist.state }}
+			<i class="fas fa-globe-americas"></i> {{ artist.city }}, {{ artist.state.label }}
 		</p>
 		<p>
 			<i class="fas fa-phone-alt"></i> {% if artist.phone %}{{ artist.phone }}{% else %}No Phone{% endif %}

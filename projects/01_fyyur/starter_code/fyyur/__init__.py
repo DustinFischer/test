@@ -21,8 +21,6 @@ import fyyur.controllers
 
 moment = Moment(app)
 
-# TODO: Add csrf protection
-# https://flask-wtf.readthedocs.io/en/stable/api.html
 
 # ----------------------------------------------------------------------------#
 # Filters.

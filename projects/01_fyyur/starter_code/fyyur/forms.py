@@ -50,21 +50,15 @@ class ArtistForm(Form):
         'state', validators=[DataRequired()],
         choices=enums.State.choices()
     )
-    phone = StringField(  # TODO implement validation logic for state
-        'phone'
-    )
+    phone = StringField('phone', validators=[DataRequired()])
 
     genres = SelectMultipleField(
-        # TODO implement enum restriction
         'genres', validators=[DataRequired()],
-        choices=enums.Genre.choices()
+        choices=enums.Genre.choices(), coerce=int,
     )
+    seeking_venue = BooleanField('seeking_venue', default=True)
+    seeking_description = StringField('seeking_description', validators=[Optional()])
 
-    facebook_link = StringField(
-        'facebook_link', validators=[Optional(), URL()]
-    )
-    image_link = StringField(
-        'image_link', validators=[Optional(), URL()]
-    )
-
-# TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM
+    website = StringField('website', validators=[Optional(), URL()])
+    facebook_link = StringField('facebook_link', validators=[Optional(), URL()])
+    image_link = StringField('image_link', validators=[Optional(), URL()])

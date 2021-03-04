@@ -6,12 +6,15 @@
 		<h1 class="monospace">
 			{{ venue.name }}
 		</h1>
+        <p class="subtitle">
+            <a href="{{ url_for('edit_venue', venue_id=venue.id) }}">Edit venue</a>
+        </p>
 		<p class="subtitle">
 			ID: {{ venue.id }}
 		</p>
 		<div class="genres">
 			{% for genre in venue.genres %}
-			<span class="genre">{{ genre }}</span>
+			<span class="genre">{{ genre.label }}</span>
 			{% endfor %}
 		</div>
 		<p>
