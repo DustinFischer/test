@@ -48,34 +48,46 @@ class IntEnum(db.TypeDecorator):
         return self._enumtype(value)
 
 
-class TalentModel:
+class Show(db.Model):
+    __tablename__ = 'show'
+    id = db.Column(db.Integer, primary_key=True)
+    venue_id = db.Column(db.Integer, db.ForeignKey('venue.id'), nullable=False)
+    artist_id = db.Column(db.Integer, db.ForeignKey('artist.id'), nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False)
+    venue = db.relationship('Venue', back_populates='shows')
+    artist = db.relationship('Artist', back_populates='shows')
+
+
+class Venue(db.Model):
+    __tablename__ = 'venue'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     city = db.Column(db.String(120), nullable=False)
     state = db.Column(IntEnum(enums.State), nullable=False)
-
+    address = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(120), nullable=False)
-
     genres = db.Column(ARRAY(IntEnum(enums.Genre)))  # Note this must be cast in migrations file to SmallInteger()
-
     website = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-
+    seeking_talent = db.Column(db.Boolean, default=False, nullable=False)
     seeking_description = db.Column(db.String(500))
 
-
-class Venue(TalentModel, db.Model):
-    __tablename__ = 'venue'
-
-    address = db.Column(db.String(120), nullable=False)
-    seeking_talent = db.Column(db.Boolean, default=False, nullable=False)
+    shows = db.relationship('Show', back_populates='venue')
 
 
-class Artist(TalentModel, db.Model):
+class Artist(db.Model):
     __tablename__ = 'artist'
-
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    city = db.Column(db.String(120), nullable=False)
+    state = db.Column(IntEnum(enums.State), nullable=False)
+    phone = db.Column(db.String(120), nullable=False)
+    genres = db.Column(ARRAY(IntEnum(enums.Genre)))  # Note this must be cast in migrations file to SmallInteger()
+    website = db.Column(db.String(120))
+    image_link = db.Column(db.String(500))
+    facebook_link = db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean, default=False, nullable=False)
+    seeking_description = db.Column(db.String(500))
 
-
-# TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+    shows = db.relationship('Show', back_populates='artist')

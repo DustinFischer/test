@@ -60,18 +60,22 @@ def create_venue():
 
     # Handle create form POST submission
     if form.is_submitted():
-        if form.validate_on_submit():
-            with db_session() as session:
-                venue = Venue()
-                form.populate_obj(venue)
-                session.add(venue)
+        success_msg = ['Venue ' + request.form['name'] + ' was successfully listed!', 'alert-success']
+        if form.validate():
+            try:
+                with db_session() as session:
+                    venue = Venue()
+                    form.populate_obj(venue)
+                    session.add(venue)
+            except Exception:
+                success_msg = ['Failed to add Venue ' + request.form['name'] + '!', 'alert-danger']
         else:
-            flash('Form field error. Please fix and submit again.', 'alert-danger')
             return render_template('forms/change_venue.html', form=form)
-        flash('Venue ' + request.form['name'] + ' was successfully listed!', 'alert-success')
-        return render_template('pages/home.html')
 
-    # Return empty create form
+        flash(*success_msg)
+        return redirect(url_for('index'))
+
+    # Return empty create form on GET
     return render_template('forms/change_venue.html', form=form, add=True)
 
 
@@ -309,15 +313,19 @@ def create_artist():
 
     # Handle create form POST submission
     if form.is_submitted():
-        if form.validate_on_submit():
-            with db_session() as session:
-                artist = Artist()
-                form.populate_obj(artist)
-                session.add(artist)
+        success_msg = ['Artist ' + request.form['name'] + ' was successfully listed!', 'alert-success']
+        if form.validate():
+            try:
+                with db_session() as session:
+                    artist = Artist()
+                    form.populate_obj(artist)
+                    session.add(artist)
+            except Exception:
+                ['Failed to add Artist ' + request.form['name'] + '!', 'alert-danger']
         else:
-            flash('Form field error. Please fix and submit again.', 'alert-danger')
             return render_template('forms/change_artist.html', form=form)
-        flash('Artist ' + request.form['name'] + ' was successfully listed!', 'alert-success')
+
+        flash(*success_msg)
         return render_template('pages/home.html')
 
     # Return empty create form
@@ -388,24 +396,29 @@ def list_shows():
     return render_template('pages/shows.html', shows=data)
 
 
-@app.route('/shows/create')
-def create_shows():
-    # renders form. do not touch.
-    form = ShowForm()
-    return render_template('forms/new_show.html', form=form)
+@app.route('/shows/create', methods=['GET', 'POST'])
+def create_show():
+    form = ShowForm(request.form)
 
+    # Handle create form POST submission
+    if form.is_submitted():
+        success_msg = ['Show was successfully listed!', 'alert-success']
+        if form.validate():
+            try:
+                with db_session() as session:
+                    show = Show()
+                    form.populate_obj(show)
+                    session.add(show)
+            except Exception:
+                success_msg = ['Failed to add Show!', 'alert-danger']
+        else:
+            return render_template('forms/change_show.html', form=form)
 
-@app.route('/shows/create', methods=['POST'])
-def create_show_submission():
-    # called to create new shows in the db, upon submitting new show listing form
-    # TODO: insert form data as a new Show record in the db, instead
+        flash(*success_msg)
+        return redirect(url_for('index'))
 
-    # on successful db insert, flash success
-    flash('Show was successfully listed!')
-    # TODO: on unsuccessful db insert, flash an error instead.
-    # e.g., flash('An error occurred. Show could not be listed.')
-    # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
-    return render_template('pages/home.html')
+    # Return empty create form on GET
+    return render_template('forms/change_show.html', form=form, add=True)
 
 
 @app.errorhandler(404)

@@ -1,17 +1,18 @@
 from datetime import datetime
 
 from flask_wtf import Form
-from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
-from wtforms.validators import DataRequired, URL, Optional
+from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField, IntegerField
+from wtforms.validators import DataRequired, URL, Optional, ValidationError
 
 from . import enums
+from . import models
 
 
 class ShowForm(Form):
-    artist_id = StringField(
-        'artist_id'
+    artist_id = IntegerField(
+        'artist_id',
     )
-    venue_id = StringField(
+    venue_id = IntegerField(
         'venue_id'
     )
     start_time = DateTimeField(
@@ -19,6 +20,14 @@ class ShowForm(Form):
         validators=[DataRequired()],
         default=datetime.today()
     )
+
+    def validate_artist_id(self, field):
+        if models.Artist.query.get(field.data) is None:
+            raise ValidationError('Artist matching ID not found')
+
+    def validate_venue_id(self, field):
+        if models.Venue.query.get(field.data) is None:
+            raise ValidationError('Venue matching ID not found')
 
 
 class VenueForm(Form):
@@ -62,3 +71,5 @@ class ArtistForm(Form):
     website = StringField('website', validators=[Optional(), URL()])
     facebook_link = StringField('facebook_link', validators=[Optional(), URL()])
     image_link = StringField('image_link', validators=[Optional(), URL()])
+
+
