@@ -1,0 +1,7 @@
+{% macro field_errors(form_field) %}
+    <ul style="list-style-type:none; padding-left: 0" class="text-danger">
+        {% for error in form_field.errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+{% endmacro %}

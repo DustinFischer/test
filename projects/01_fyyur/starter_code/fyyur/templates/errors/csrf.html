@@ -1,0 +1,6 @@
+{% extends 'layouts/main.html' %}
+{% block content %}
+<h1>CSRF Error</h1>
+<p>{{ reason }}</p>
+<p><a href="{{url_for('index')}}">Home</a></p>
+{% endblock %}

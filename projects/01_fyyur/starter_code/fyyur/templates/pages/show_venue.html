@@ -3,19 +3,26 @@
 {% block content %}
 <div class="row">
 	<div class="col-sm-6">
+        <div id="error" class="hidden alert alert-danger fade in">
+        <a class="close" data-dismiss="alert">&times;</a>
+            <div id="error-text"></div>
+        </div>
 		<h1 class="monospace">
 			{{ venue.name }}
 		</h1>
+        <p class="subtitle">
+            <a href="{{ url_for('edit_venue', venue_id=venue.id) }}">Edit venue</a>
+        </p>
 		<p class="subtitle">
 			ID: {{ venue.id }}
 		</p>
 		<div class="genres">
 			{% for genre in venue.genres %}
-			<span class="genre">{{ genre }}</span>
+			<span class="genre">{{ genre.label }}</span>
 			{% endfor %}
 		</div>
 		<p>
-			<i class="fas fa-globe-americas"></i> {{ venue.city }}, {{ venue.state }}
+			<i class="fas fa-globe-americas"></i> {{ venue.city }}, {{ venue.state.label }}
 		</p>
 		<p>
 			<i class="fas fa-map-marker"></i> {% if venue.address %}{{ venue.address }}{% else %}No Address{% endif %}
@@ -52,8 +59,8 @@
 		{%for show in venue.upcoming_shows %}
 		<div class="col-sm-4">
 			<div class="tile tile-show">
-				<img src="{{ show.artist_image_link }}" alt="Show Artist Image" />
-				<h5><a href="/artists/{{ show.artist_id }}">{{ show.artist_name }}</a></h5>
+				<img src="{{ show.artist.image_link }}" alt="Show Artist Image" />
+				<h5><a href="/artists/{{ show.artist.id }}">{{ show.artist.name }}</a></h5>
 				<h6>{{ show.start_time|datetime('full') }}</h6>
 			</div>
 		</div>
@@ -66,14 +73,46 @@
 		{%for show in venue.past_shows %}
 		<div class="col-sm-4">
 			<div class="tile tile-show">
-				<img src="{{ show.artist_image_link }}" alt="Show Artist Image" />
-				<h5><a href="/artists/{{ show.artist_id }}">{{ show.artist_name }}</a></h5>
+				<img src="{{ show.artist.image_link }}" alt="Show Artist Image" />
+				<h5><a href="/artists/{{ show.artist.id }}">{{ show.artist.name }}</a></h5>
 				<h6>{{ show.start_time|datetime('full') }}</h6>
 			</div>
 		</div>
 		{% endfor %}
 	</div>
 </section>
+<section>
+    <button id="del-venue" data-id="{{ venue.id }}">Delete Venue</button>
+
+</section>
+
+<script>
+    var delBtn = document.getElementById('del-venue');
+    delBtn.onclick = function(e) {
+        const venueId = e.target.dataset['id'];
+        fetch('/venues/' + venueId, {
+            method: 'DELETE'
+        })
+        .then(res => {
+            console.log(res);
+            if (!res.ok) {
+                return Promise.reject({status: res.status});
+            } else {
+                window.location.href = "/"
+            }
+        })
+        .catch(err => {
+            document.getElementById('error').classList.remove('hidden');
+            var status_code = err.status ? err.status  : 500;
+            var msg = 'There was an unexpected error while trying to delete the Venue (500)'
+            if (status_code === 404) {
+                msg = 'Could not find Venue (' + venueId + ') to delete (404)';
+            }
+            document.getElementById('error-text').innerHTML = msg;
+        })
+    }
+
+</script>
 
 {% endblock %}
 
