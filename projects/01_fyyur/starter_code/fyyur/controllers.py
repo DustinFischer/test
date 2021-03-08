@@ -5,7 +5,7 @@
 import logging
 from logging import Formatter, FileHandler
 
-from flask import render_template, request, flash, redirect, url_for, abort
+from flask import render_template, request, flash, redirect, url_for, abort, jsonify
 from flask_wtf.csrf import CSRFError
 
 from .forms import *
@@ -116,10 +116,22 @@ def edit_venue(venue_id):
 def delete_venue(venue_id):
     # TODO: Complete this endpoint for taking a venue_id, and using
     # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
+    success_msg = ['Venue was successfully deleted!', 'alert-success']
 
+    venue = Venue.query.get(venue_id) or abort(404)
+
+    try:
+        with db_session() as session:
+            raise
+            session.delete(venue)
+    except Exception as e:
+        abort(404)
+        # pass
+
+    flash('Venue was successfully deleted!', 'alert-success')
     # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
     # clicking that button delete it from the db then redirect the user to the homepage
-    return None
+    return jsonify({'success': True})
 
 
 @app.route('/venues/search', methods=['POST'])
@@ -270,6 +282,3 @@ if not app.debug:
     file_handler.setLevel(logging.INFO)
     app.logger.addHandler(file_handler)
     app.logger.info('errors')
-
-
-

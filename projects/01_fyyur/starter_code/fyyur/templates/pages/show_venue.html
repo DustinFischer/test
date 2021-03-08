@@ -3,6 +3,10 @@
 {% block content %}
 <div class="row">
 	<div class="col-sm-6">
+        <div id="error" class="hidden alert alert-danger fade in">
+        <a class="close" data-dismiss="alert">&times;</a>
+            <div id="error-text"></div>
+        </div>
 		<h1 class="monospace">
 			{{ venue.name }}
 		</h1>
@@ -77,6 +81,38 @@
 		{% endfor %}
 	</div>
 </section>
+<section>
+    <button id="del-venue" data-id="{{ venue.id }}">Delete Venue</button>
+
+</section>
+
+<script>
+    var delBtn = document.getElementById('del-venue');
+    delBtn.onclick = function(e) {
+        const venueId = e.target.dataset['id'];
+        fetch('/venues/' + venueId, {
+            method: 'DELETE'
+        })
+        .then(res => {
+            console.log(res);
+            if (!res.ok) {
+                return Promise.reject({status: res.status});
+            } else {
+                window.location.href = "/"
+            }
+        })
+        .catch(err => {
+            document.getElementById('error').classList.remove('hidden');
+            var status_code = err.status ? err.status  : 500;
+            var msg = 'There was an unexpected error while trying to delete the Venue (500)'
+            if (status_code === 404) {
+                msg = 'Could not find Venue (' + venueId + ') to delete (404)';
+            }
+            document.getElementById('error-text').innerHTML = msg;
+        })
+    }
+
+</script>
 
 {% endblock %}
 
