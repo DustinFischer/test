@@ -6,6 +6,7 @@ from wtforms.validators import DataRequired, URL, Optional, ValidationError
 
 from . import enums
 from . import models
+from .validators import GeoValidateUsPhone
 
 
 class ShowForm(Form):
@@ -38,7 +39,7 @@ class VenueForm(Form):
         choices=enums.State.choices()
     )
     address = StringField('address', validators=[DataRequired()])
-    phone = StringField('phone', validators=[DataRequired()])
+    phone = StringField('phone', validators=[DataRequired(), GeoValidateUsPhone()])
 
     genres = SelectMultipleField(
         'genres', validators=[DataRequired()],
@@ -59,7 +60,7 @@ class ArtistForm(Form):
         'state', validators=[DataRequired()],
         choices=enums.State.choices()
     )
-    phone = StringField('phone', validators=[DataRequired()])
+    phone = StringField('phone', validators=[DataRequired(), GeoValidateUsPhone()])
 
     genres = SelectMultipleField(
         'genres', validators=[DataRequired()],

@@ -9,9 +9,6 @@
     <div class="form-wrapper">
         <form method="post" class="form">
             {{ form.csrf_token }}
-            {% if form.csrf_token.errors %}
-                <div class="warning">Invalid CSRF token</div>
-            {% endif %}
             <h3 class="form-heading">List a new artist<a href="{{ url_for('index') }}" title="Back to homepage"><i
                     class="fa fa-home pull-right"></i></a></h3>
             <div class="form-group">
@@ -26,14 +23,13 @@
                     </div>
                     <div class="form-group">
                         {{ form.state(class_ = 'form-control', placeholder='State', autofocus = true) }}
-
                     </div>
                 </div>
             </div>
             <div class="form-group">
                 <label for="phone">Phone</label>
                 {{ form.phone(class_ = 'form-control', placeholder='xxx-xxx-xxxx', autofocus = true) }}
-                {{ field_errors(form.facebook_link) }}
+                {{ field_errors(form.phone) }}
             </div>
             <div class="form-group">
                 <label for="genres">Genres</label>

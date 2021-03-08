@@ -9,9 +9,6 @@
 <div class="form-wrapper">
     <form method="post" class="form">
         {{ form.csrf_token }}
-        {% if form.csrf_token.errors %}
-            <div class="warning">Invalid CSRF token</div>
-        {% endif %}
 
         <h3 class="form-heading">
             {% if add %}List a new show{% else %}Change show listing{% endif %}

@@ -7,7 +7,6 @@ from logging import Formatter, FileHandler
 
 from flask import render_template, request, flash, redirect, url_for, abort
 from flask_wtf.csrf import CSRFError
-from sqlalchemy import desc
 
 from .forms import *
 from .models import *
@@ -26,8 +25,6 @@ def index():
 #  ----------------------------------------------------------------
 @app.route('/venues')
 def list_venues():
-    #  TODO: num_shows should be aggregated based on number of upcoming shows per venue.
-
     # Find unique combinations of states existing in database
     distinct_states = db.session.query(Venue).distinct(Venue.state) \
         .with_entities(Venue.state) \
@@ -285,7 +282,6 @@ def server_error(error):
 
 @app.errorhandler(CSRFError)
 def csrf_error(reason):
-    breakpoint()
     return render_template('errors/csrf.html', reason=reason)
 
 
