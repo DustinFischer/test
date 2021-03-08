@@ -83,11 +83,7 @@ def show_venue(venue_id):
     venue = Venue.query.get(venue_id) or abort(404)
 
     # Join query for venue shows, extract artist and show details
-    shows = Show.query.join(Venue).filter(Show.venue_id == venue_id) \
-        .with_entities(Artist.id.label('artist_id'),
-                       Artist.name.label('artist_name'),
-                       Artist.image_link.label('artist_image_link'),
-                       Show.start_time)
+    shows = Show.query.join(Venue).filter(Show.venue_id == venue_id)
 
     past_shows = shows.filter(Show.start_time <= datetime.now())
     upcoming_shows = shows.filter(Show.start_time > datetime.now())
@@ -173,11 +169,7 @@ def show_artist(artist_id):
     artist = Artist.query.get(artist_id) or abort(404)
 
     # Join query for artist shows, extract artist and show details
-    shows = Show.query.join(Venue).filter(Show.artist_id == artist_id) \
-        .with_entities(Venue.id.label('venue_id'),
-                       Venue.name.label('venue_name'),
-                       Venue.image_link.label('venue_image_link'),
-                       Show.start_time)
+    shows = Show.query.join(Venue).filter(Show.artist_id == artist_id)
 
     past_shows = shows.filter(Show.start_time <= datetime.now())
     upcoming_shows = shows.filter(Show.start_time > datetime.now())
