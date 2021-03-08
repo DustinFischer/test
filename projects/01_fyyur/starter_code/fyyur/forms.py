@@ -10,17 +10,9 @@ from .validators import GeoValidateUsPhone
 
 
 class ShowForm(Form):
-    artist_id = IntegerField(
-        'artist_id',
-    )
-    venue_id = IntegerField(
-        'venue_id'
-    )
-    start_time = DateTimeField(
-        'start_time',
-        validators=[DataRequired()],
-        default=datetime.today()
-    )
+    artist_id = IntegerField('artist_id')
+    venue_id = IntegerField('venue_id')
+    start_time = DateTimeField('start_time', validators=[DataRequired()], default=datetime.today())
 
     def validate_artist_id(self, field):
         if models.Artist.query.get(field.data) is None:
@@ -72,5 +64,3 @@ class ArtistForm(Form):
     website = StringField('website', validators=[Optional(), URL()])
     facebook_link = StringField('facebook_link', validators=[Optional(), URL()])
     image_link = StringField('image_link', validators=[Optional(), URL()])
-
-
