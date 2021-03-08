@@ -83,6 +83,10 @@ def show_venue(venue_id):
     venue = Venue.query.get(venue_id) or abort(404)
 
     # Join query for venue shows, extract artist and show details
+    """
+    --- Join query ---
+    # SELECT * FROM show LEFT OUTER JOIN venue ON venue.id = show.venue_id;
+    """
     shows = Show.query.join(Venue).filter(Show.venue_id == venue_id)
 
     past_shows = shows.filter(Show.start_time <= datetime.now())
@@ -173,7 +177,11 @@ def show_artist(artist_id):
     artist = Artist.query.get(artist_id) or abort(404)
 
     # Join query for artist shows, extract artist and show details
-    shows = Show.query.join(Venue).filter(Show.artist_id == artist_id)
+    """
+    --- Join query ---
+    # SELECT * FROM show LEFT OUTER JOIN artist ON artist.id = show.artist_id;
+    """
+    shows = Show.query.join(Artist).filter(Show.artist_id == artist.id)
 
     past_shows = shows.filter(Show.start_time <= datetime.now())
     upcoming_shows = shows.filter(Show.start_time > datetime.now())
