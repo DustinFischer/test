@@ -12,7 +12,7 @@ class Config(object):
 
     # DB env variables
     DB_NAME = env('DB_NAME', default='fyyur')
-    DB_USER = env('DB_USER', default='dustin')
+    DB_USER = env('DB_USER', default='postgres')
     DB_PASSWORD = env('DB_PASSWORD', default='')
     DB_HOST = env('DB_HOST', default='127.0.0.1')
     DB_PORT = env('DB_PORT', default=5432)
