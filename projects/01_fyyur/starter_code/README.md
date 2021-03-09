@@ -157,7 +157,7 @@ git push -u origin master
 
 3. **Initialize and activate a virtualenv using:**
 ```
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate
 ```
 >**Note** - In Windows, the `env` does not have a `bin` directory. Therefore, you'd use the analogous command shown below:
