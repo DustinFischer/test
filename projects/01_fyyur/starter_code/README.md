@@ -136,8 +136,9 @@ Best of luck in your final project! Fyyur depends on you!
 ## Development Setup
 1. **Download the project starter code locally**
 ```
-git clone https://github.com/udacity/FSND.git
-cd FSND/projects/01_fyyur/starter_code 
+# Copy contents of unzipped fyyur.zip into chosen project directory and 
+# cd into project directory
+cd starter_code/
 ```
 
 2. **Create an empty repository in your Github account online. To change the remote repository path in your local repository, use the commands below:**
@@ -156,8 +157,8 @@ git push -u origin master
 
 3. **Initialize and activate a virtualenv using:**
 ```
-python -m virtualenv env
-source env/bin/activate
+python -m venv venv
+source venv/bin/activate
 ```
 >**Note** - In Windows, the `env` does not have a `bin` directory. Therefore, you'd use the analogous command shown below:
 ```
@@ -167,13 +168,20 @@ source env/Scripts/activate
 4. **Install the dependencies:**
 ```
 pip install -r requirements.txt
+pip install -e .
 ```
 
 5. **Run the development server:**
 ```
-export FLASK_APP=myapp
+export FLASK_APP=fyyur
 export FLASK_ENV=development # enables debug mode
-python3 app.py
+
+#-- OPTIONAL: specify DB parameters --#
+# DB_NAME=fyyur
+# DB_USER=<user>  # specify db user
+# DB_PASSWORD=<password>  # specify db password
+
+flask db upgrade
 ```
 
 6. **Verify on the Browser**<br>
