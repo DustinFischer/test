@@ -4,45 +4,45 @@ from flaskr.api import api
 
 
 @api.app_errorhandler(400)
-def not_found(err=''):
+def not_found(err):
     return jsonify({
         'success': False,
         'error': 400,
-        'message': err or 'Bad Request'
+        'message': 'Bad Request'
     }), 400
 
 
 @api.app_errorhandler(404)
-def not_found(err=''):
+def not_found(err):
     return jsonify({
         'success': False,
         'error': 404,
-        'message': err or 'Not found'
+        'message': 'Not found'
     }), 404
 
 
 @api.app_errorhandler(405)
-def method_not_allowed(err=''):
+def method_not_allowed(err):
     return jsonify({
         'success': False,
         'error': 405,
-        'message': err or 'Method not allowed'
+        'message': 'Method not allowed'
     }), 405
 
 
 @api.app_errorhandler(422)
-def unprocessable_entity(err=''):
+def unprocessable_entity(err):
     return jsonify({
         'success': False,
         'error': 422,
-        'message': err or 'Unprocessable entity'
+        'message': 'Unprocessable entity'
     }), 422
 
 
 @api.app_errorhandler(500)
-def unprocessable_entity(err=''):
+def unprocessable_entity(err):
     return jsonify({
         'success': False,
         'error': 500,
-        'message': err or 'Server error'
+        'message': 'Server error'
     }), 500
