@@ -70,7 +70,7 @@ class QuestionView extends Component {
       type: "POST",
       dataType: 'json',
       contentType: 'application/json',
-      data: JSON.stringify({searchTerm: searchTerm, category_id: this.state.currentCategory}),
+      data: JSON.stringify({searchTerm: searchTerm, categoryId: this.state.currentCategory}),
       xhrFields: {
         withCredentials: true
       },
@@ -93,10 +93,13 @@ class QuestionView extends Component {
   selectPage(num) {
     this.setState({page: num}, () => {
       if (this.state.currentSearch) {
+        // Continue in active questions by search view
         this.submitSearch(this.state.currentSearch);
       } else if (this.state.currentCategory) {
+        // Continue in active questions by category view
         this.getByCategory(this.state.currentCategory);
       } else {
+        // Continue in active questions by list view
         this.getQuestions();
       }
     });
@@ -124,13 +127,18 @@ class QuestionView extends Component {
     if (action === 'DELETE') {
       if (window.confirm('are you sure you want to delete the question?')) {
         $.ajax({
-          url: `/questions/${id}`, //TODO: update request URL
+          url: `/api/questions/${id}`,
           type: "DELETE",
           success: (result) => {
             this.getQuestions();
           },
-          error: (error) => {
-            alert('Unable to load questions. Please try your request again')
+          error: (err) => {
+            let status_code = err.status ? err.status  : 500;
+            let msg = 'There was an unexpected error while trying to delete the Question (500)'
+            if (status_code === 404) {
+                msg = 'Could not find Question to delete (404)';
+            }
+            alert(msg)
             return;
           }
         })

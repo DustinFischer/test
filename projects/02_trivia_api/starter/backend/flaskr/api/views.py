@@ -1,7 +1,7 @@
 from flask import jsonify, request, abort, current_app
 
 from flaskr.api import api
-from flaskr.models import Question, Category
+from flaskr.models import Question, Category, db_session
 
 
 @api.route('/')
@@ -52,7 +52,7 @@ def questions_by_category(cat_id):
 def search_questions():
     data = request.get_json()
     search_term = data.get('searchTerm', '')
-    category_id = data.get('category_id', '')
+    category_id = data.get('categoryId', '')
 
     questions_categories = Question.query.join(Category, Question.category == Category.id)
 
@@ -70,3 +70,16 @@ def search_questions():
         'questions': [question.format() for question in pag_search],
         'total_questions': search.count(),  # TODO: Test count
     })
+
+
+@api.route('/questions/<int:question_id>', methods=['DELETE'])
+def delete_question(question_id):
+    question = Question.query.filter_by(id=question_id).first_or_404()
+
+    try:
+        with db_session():
+            question.delete()
+    except:
+        abort(500)
+
+    return jsonify({}), 204

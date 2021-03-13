@@ -1,6 +1,7 @@
+from contextlib import contextmanager
+
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, String, Integer, ForeignKey
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy import Column, String, Integer
 
 db = SQLAlchemy()
 
@@ -11,6 +12,20 @@ def setup_db(app=None):
         db.app = app
         db.init_app(app)
     db.create_all()
+
+
+@contextmanager
+def db_session():
+    """Provide a transactional scope around a series of operations."""
+    session = db.session
+    try:
+        yield session
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
 
 
 class Category(db.Model):
@@ -46,14 +61,9 @@ class Question(db.Model):
 
     def insert(self):
         db.session.add(self)
-        db.session.commit()
-
-    def update(self):
-        db.session.commit()
 
     def delete(self):
         db.session.delete(self)
-        db.session.commit()
 
     def format(self):
         return {
