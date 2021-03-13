@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, String, Integer, ForeignKey
+from sqlalchemy.orm import relationship, backref
 
 db = SQLAlchemy()
 
@@ -12,14 +13,30 @@ def setup_db(app=None):
     db.create_all()
 
 
+class Category(db.Model):
+    __tablename__ = 'categories'
+
+    id = Column(Integer, primary_key=True)
+    type = Column(String)
+
+    def __init__(self, type):
+        self.type = type
+
+    def format(self):
+        return {
+            'id': self.id,
+            'type': self.type
+        }
+
+
 class Question(db.Model):
     __tablename__ = 'questions'
 
     id = Column(Integer, primary_key=True)
     question = Column(String)
     answer = Column(String)
-    category = Column(String)
     difficulty = Column(Integer)
+    category = Column(Integer)
 
     def __init__(self, question, answer, category, difficulty):
         self.question = question
@@ -45,20 +62,4 @@ class Question(db.Model):
             'answer': self.answer,
             'category': self.category,
             'difficulty': self.difficulty
-        }
-
-
-class Category(db.Model):
-    __tablename__ = 'categories'
-
-    id = Column(Integer, primary_key=True)
-    type = Column(String)
-
-    def __init__(self, type):
-        self.type = type
-
-    def format(self):
-        return {
-            'id': self.id,
-            'type': self.type
         }

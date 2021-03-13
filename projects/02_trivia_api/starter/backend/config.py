@@ -29,6 +29,9 @@ class Config(object):
     # Silence the deprecation warning
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    # Pagination
+    POSTS_PER_PAGE = 2
+
 
 class DevelopmentConfig(Config):
     DEBUG = True
