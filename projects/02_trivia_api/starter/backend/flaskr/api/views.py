@@ -46,3 +46,27 @@ def questions_by_category(cat_id):
         'total_questions': category_questions.count(),  # TODO: Test count
         'current_category': category.id,
     })
+
+
+@api.route('/questions', methods=['POST'])
+def search_questions():
+    data = request.get_json()
+    search_term = data.get('searchTerm', '')
+    category_id = data.get('category_id', '')
+
+    questions_categories = Question.query.join(Category, Question.category == Category.id)
+
+    if category_id:
+        questions_categories = questions_categories.filter(Question.category == category_id)
+
+    search = questions_categories.filter(
+        Question.question.ilike(f'%{search_term}%') |  # question contains
+        Category.type.ilike(f'%{search_term}%')  # category contains
+    )
+
+    pag_search = paginate_query(request, search)
+
+    return jsonify({
+        'questions': [question.format() for question in pag_search],
+        'total_questions': search.count(),  # TODO: Test count
+    })

@@ -7,8 +7,6 @@ from config import Config
 
 from .models import setup_db, Question, Category
 
-QUESTIONS_PER_PAGE = 10
-
 
 def create_app(config_class=None):
     # create and configure the app
