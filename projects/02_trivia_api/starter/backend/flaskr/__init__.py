@@ -33,6 +33,18 @@ def create_app(config_class=None):
     def index():
         return 'Welcome to Trivia!'
 
+    @app.route('/api/')
+    def api_index():
+        """List api endpoints and their allowed methods."""
+        routes = []
+        for _route in app.url_map.iter_rules():
+            if str(_route).startswith('/api'):
+                routes.append(f"{_route.rule}: {_route.methods}")
+
+        return jsonify({
+            'endpoints':  [routes]
+        })
+
     '''
     @TODO: 
     Create an endpoint to handle GET requests 

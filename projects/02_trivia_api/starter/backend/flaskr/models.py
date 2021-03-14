@@ -20,7 +20,6 @@ def db_session():
     session = db.session
     try:
         yield session
-        session.commit()
     except:
         session.rollback()
         raise
@@ -61,9 +60,14 @@ class Question(db.Model):
 
     def insert(self):
         db.session.add(self)
+        db.session.commit()
 
     def delete(self):
         db.session.delete(self)
+        db.session.commit()
+
+    def refresh(self):
+        return self.query.get(self.id)
 
     def format(self):
         return {
