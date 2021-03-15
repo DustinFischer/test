@@ -1,6 +1,6 @@
 from flask import jsonify
 
-from flaskr.api import api
+from . import api
 
 
 def error_json(err):

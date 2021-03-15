@@ -73,31 +73,6 @@ def create_question():
         abort(422)
 
 
-@api.route('/categories')
-def categories():
-    categories = Category.query.order_by(Category.type)
-
-    return jsonify({
-        'categories': {category.id: category.type for category in categories.all()}
-    }), 200
-
-
-@api.route('/categories/<int:cat_id>/questions')
-def category_questions(cat_id):
-    category = Category.query.filter_by(id=cat_id) \
-        .first_or_404('Category matching the provided ID was not found')
-
-    questions = Question.query
-    category_questions = questions.filter(Question.category == cat_id)
-    pag_questions = paginate_query(request, category_questions)
-
-    return jsonify({
-        'questions': [question.format() for question in pag_questions],
-        'total_questions': category_questions.count(),  # TODO: Test count
-        'current_category': category.id,
-    }), 200
-
-
 @api.route('/questions/<int:question_id>', methods=['DELETE'])
 def delete_question(question_id):
     question = Question.query.filter_by(id=question_id) \
@@ -133,6 +108,31 @@ def search_questions():
     return jsonify({
         'questions': [question.format() for question in pag_search],
         'total_questions': search.count(),  # TODO: Test count
+    }), 200
+
+
+@api.route('/categories')
+def categories():
+    categories = Category.query.order_by(Category.type)
+
+    return jsonify({
+        'categories': {category.id: category.type for category in categories.all()}
+    }), 200
+
+
+@api.route('/categories/<int:cat_id>/questions')
+def category_questions(cat_id):
+    category = Category.query.filter_by(id=cat_id) \
+        .first_or_404('Category matching the provided ID was not found')
+
+    questions = Question.query
+    category_questions = questions.filter(Question.category == cat_id)
+    pag_questions = paginate_query(request, category_questions)
+
+    return jsonify({
+        'questions': [question.format() for question in pag_questions],
+        'total_questions': category_questions.count(),  # TODO: Test count
+        'current_category': category.id,
     }), 200
 
 

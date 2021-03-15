@@ -31,7 +31,7 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Pagination
-    POSTS_PER_PAGE = 10
+    POSTS_PER_PAGE = env('POSTS_PER_PAGE', 10)
 
 
 class DevelopmentConfig(Config):
