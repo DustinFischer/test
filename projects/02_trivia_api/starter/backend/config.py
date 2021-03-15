@@ -25,12 +25,13 @@ class Config(object):
 
     # SQLAlchemy configs
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
     SQLALCHEMY_DATABASE_URI = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
     # Silence the deprecation warning
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Pagination
-    POSTS_PER_PAGE = 2
+    POSTS_PER_PAGE = 10
 
 
 class DevelopmentConfig(Config):
@@ -39,6 +40,7 @@ class DevelopmentConfig(Config):
 
 class TestConfig(Config):
     TESTING = True
+    POSTS_PER_PAGE = 2
 
 
 class ProductionConfig(Config):

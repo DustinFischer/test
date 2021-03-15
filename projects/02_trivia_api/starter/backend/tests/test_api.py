@@ -25,6 +25,10 @@ class TriviaApiTestCase(BaseTestClass):
 
     def test_question_list(self):
         """Test that hitting the question list GET endpoint returns a list of question(s), as well as categories"""
+        third_question = Question('Why is science?', 'Only Bill Nye knows', self.science.id, 5)
+        third_question.insert()
+
+        # Test list with pagination only returns 2 result
         resp = self.client.get('/api/questions')
         assert resp.status_code == 200
 
@@ -54,7 +58,7 @@ class TriviaApiTestCase(BaseTestClass):
                     'Is geography real?'
                 }
             ],
-            'total_questions': 2
+            'total_questions': 3
         }
 
     def test_question_by_category_404(self):

@@ -31,5 +31,5 @@ def unprocessable_entity(err):
 
 
 @api.app_errorhandler(500)
-def unprocessable_entity(err):
+def server_error(err):
     return error_json(err)

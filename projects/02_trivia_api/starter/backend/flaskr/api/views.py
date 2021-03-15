@@ -84,7 +84,7 @@ def categories():
 
 @api.route('/categories/<int:cat_id>/questions')
 def category_questions(cat_id):
-    category = Category.query.filter_by(id=cat_id)\
+    category = Category.query.filter_by(id=cat_id) \
         .first_or_404('Category matching the provided ID was not found')
 
     questions = Question.query
@@ -100,7 +100,7 @@ def category_questions(cat_id):
 
 @api.route('/questions/<int:question_id>', methods=['DELETE'])
 def delete_question(question_id):
-    question = Question.query.filter_by(id=question_id)\
+    question = Question.query.filter_by(id=question_id) \
         .first_or_404('Question matching the provided ID was not found for delete')
     try:
         with db_session():
@@ -123,9 +123,9 @@ def search_questions():
         questions_categories = questions_categories.filter(Question.category == category_id)
 
     search = questions_categories.filter(
-        Question.question.ilike(f'%{search_term}%') |  # question contains
-        Question.answer.ilike(f'%{search_term}%') |  # answer contains
-        Category.type.ilike(f'%{search_term}%')  # category contains
+        Question.question.ilike(f'%{search_term}%')  # question contains
+        | Question.answer.ilike(f'%{search_term}%')  # answer contains
+        | Category.type.ilike(f'%{search_term}%')  # category contains
     )
 
     pag_search = paginate_query(request, search)
@@ -157,5 +157,3 @@ def quiz_question():
     return jsonify({
         'question': question.format() if question else None
     }), 200
-
-
