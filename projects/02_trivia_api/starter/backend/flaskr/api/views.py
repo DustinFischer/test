@@ -84,7 +84,8 @@ def categories():
 
 @api.route('/categories/<int:cat_id>/questions')
 def category_questions(cat_id):
-    category = Category.query.filter_by(id=cat_id).first_or_404()
+    category = Category.query.filter_by(id=cat_id)\
+        .first_or_404('Category matching the provided ID was not found')
 
     questions = Question.query
     category_questions = questions.filter(Question.category == cat_id)
@@ -97,11 +98,24 @@ def category_questions(cat_id):
     }), 200
 
 
-@api.route('/questions', methods=['POST'])
+@api.route('/questions/<int:question_id>', methods=['DELETE'])
+def delete_question(question_id):
+    question = Question.query.filter_by(id=question_id)\
+        .first_or_404('Question matching the provided ID was not found for delete')
+    try:
+        with db_session():
+            question.delete()
+    except:
+        abort(500)
+
+    return jsonify({}), 204
+
+
+@api.route('/questions/search', methods=['POST'])
 def search_questions():
     data = request.get_json()
     search_term = data.get('searchTerm', '')
-    category_id = data.get('categoryId', '')
+    category_id = data.get('categoryId', None)
 
     questions_categories = Question.query.join(Category, Question.category == Category.id)
 
@@ -110,6 +124,7 @@ def search_questions():
 
     search = questions_categories.filter(
         Question.question.ilike(f'%{search_term}%') |  # question contains
+        Question.answer.ilike(f'%{search_term}%') |  # answer contains
         Category.type.ilike(f'%{search_term}%')  # category contains
     )
 
@@ -119,18 +134,6 @@ def search_questions():
         'questions': [question.format() for question in pag_search],
         'total_questions': search.count(),  # TODO: Test count
     }), 200
-
-
-@api.route('/questions/<int:question_id>', methods=['DELETE'])
-def delete_question(question_id):
-    question = Question.query.filter_by(id=question_id).first_or_404()
-    try:
-        with db_session():
-            question.delete()
-    except:
-        abort(500)
-
-    return jsonify({}), 204
 
 
 @api.route('/quizzes', methods=['POST'])
