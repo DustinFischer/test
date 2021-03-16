@@ -35,6 +35,11 @@ Then install the project locally in development mode:
 pip install -e .
 ```
 
+[Optional] Check formatting follows PEP8 guidelines.
+```
+flake8
+```
+
 ##### Key Dependencies
 
 - [Flask](http://flask.pocoo.org/)  is a lightweight backend microservices framework. Flask is required to handle requests and responses.
