@@ -22,7 +22,7 @@ class QuizView extends Component {
 
   componentDidMount(){
     $.ajax({
-      url: `/categories`, //TODO: update request URL
+      url: `api/categories`, //TODO: update request URL
       type: "GET",
       success: (result) => {
         this.setState({ categories: result.categories })
@@ -47,14 +47,15 @@ class QuizView extends Component {
     const previousQuestions = [...this.state.previousQuestions]
     if(this.state.currentQuestion.id) { previousQuestions.push(this.state.currentQuestion.id) }
 
+    console.log(this.state.quizCategory);
     $.ajax({
-      url: '/quizzes', //TODO: update request URL
+      url: '/api/quizzes', //TODO: update request URLq
       type: "POST",
       dataType: 'json',
       contentType: 'application/json',
       data: JSON.stringify({
         previous_questions: previousQuestions,
-        quiz_category: this.state.quizCategory
+        quiz_category: this.state.quizCategory.id
       }),
       xhrFields: {
         withCredentials: true
