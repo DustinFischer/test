@@ -9,15 +9,14 @@ ALGORITHMS = ['RS256']
 API_AUDIENCE = 'coffee-api'
 
 
-## AuthError Exception
+# AuthError Exception
 class AuthError(Exception):
     def __init__(self, error, status_code):
         self.error = error
         self.status_code = status_code
 
 
-## Auth Header
-
+#  Auth Header
 def get_token_auth_header():
     """
     @TODO implement get_token_auth_header() method
@@ -27,6 +26,14 @@ def get_token_auth_header():
             it should raise an AuthError if the header is malformed
         return the token part of the header
     """
+    auth = request.headers.get('Authorization', None)
+
+    if auth is None:
+        raise AuthError({
+            'code': 'authorization_header_missing',
+            'description': 'Authorization header is expected'
+        }, 401)
+
     raise Exception('Not Implemented')
 
 
