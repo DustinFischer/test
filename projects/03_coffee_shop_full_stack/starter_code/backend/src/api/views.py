@@ -7,21 +7,17 @@ from flask_cors import CORS
 
 from ..database.models import db_drop_and_create_all, setup_db, Drink
 from .auth import AuthError, requires_auth
+from . import api
 
 BASE_DIR = os.path.abspath('.')
 load_dotenv(os.path.join(BASE_DIR, os.getenv('DOT_ENV', '.env')))
 
 
-# app = Flask(__name__)
-# setup_db(app)
-# CORS(app)
+@api.route('/drinks')
+@requires_auth()
+def drinks():
+    return 200
 
-'''
-@TODO uncomment the following line to initialize the datbase
-!! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
-!! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
-'''
-# db_drop_and_create_all()
 
 ## ROUTES
 '''

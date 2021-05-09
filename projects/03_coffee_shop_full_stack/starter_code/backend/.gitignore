@@ -30,3 +30,4 @@ venv/
 .cache/
 .project
 .python-version
+.env
