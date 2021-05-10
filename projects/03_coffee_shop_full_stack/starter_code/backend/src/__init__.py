@@ -19,10 +19,10 @@ def create_app(config_class=None):
 
     # Register app blueprints
     from .api import api as api_bp
-    app.register_blueprint(api_bp, url_prefix='/api')
+    app.register_blueprint(api_bp, url_prefix='/')
 
     # Add CORS protection to api endpoints
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
     @app.after_request
     def after_request(response):
@@ -39,7 +39,7 @@ def create_app(config_class=None):
         """List api endpoints and their allowed methods."""
         routes = []
         for _route in app.url_map.iter_rules():
-            if str(_route).startswith('/api'):
+            if str(_route).startswith('/'):
                 routes.append(f"{_route.rule}: {_route.methods}")
 
         return jsonify({
