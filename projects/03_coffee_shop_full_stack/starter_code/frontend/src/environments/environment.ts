@@ -8,7 +8,7 @@ export const environment = {
   auth0: {
     url: 'dustin-sso.eu', // the auth0 domain prefix
     audience: 'coffee-api', // the audience set for the auth0 app
-    clientId: 'zYHJ5UETQqNquABCQMKZMK3p5MUuygiM', // the client id generated for the auth0 app
-    callbackURL: 'http://localhost:8100', // the base url of the running ionic application. 
+    clientId: 'N3PFFe9GNxztbFpDZqcU8gSxxU89G0x8', // the client id generated for the auth0 app
+    callbackURL: 'http://localhost:8100', // the base url of the running ionic application.
   }
 };
