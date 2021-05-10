@@ -59,7 +59,7 @@ def check_permissions(permission, payload):
             'description': 'Permissions not included in JWT.'
         }, 403)
 
-    if perms.get(permission, None) is None:
+    if permission not in perms:
         raise AuthError({
             'code': 'unauthorized',
             'description': 'Permission not found.'
@@ -73,7 +73,7 @@ def verify_decode_jwt(token):
 
     try:
         header = jwt.get_unverified_header(token)
-    except jwt.JWTError as exc:
+    except jwt.JWTError:
         raise AuthError({
             'code': 'invalid_header',
             'description': 'Error decoding token headers'

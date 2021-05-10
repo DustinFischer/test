@@ -5,7 +5,7 @@ import json
 from dotenv import load_dotenv
 from flask_cors import CORS
 
-from ..database.models import db_drop_and_create_all, setup_db, Drink
+from ..database.models import Drink
 from .auth import AuthError, requires_auth
 from . import api
 
@@ -14,31 +14,20 @@ load_dotenv(os.path.join(BASE_DIR, os.getenv('DOT_ENV', '.env')))
 
 
 @api.route('/drinks')
-@requires_auth()
 def drinks():
-    return 200
+    return jsonify({
+        'drinks': [drink.short() for drink in Drink.query],
+        'success': True
+    }), 200
 
 
-## ROUTES
-'''
-@TODO implement endpoint
-    GET /drinks
-        it should be a public endpoint
-        it should contain only the drink.short() data representation
-    returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
-        or appropriate status code indicating reason for failure
-'''
-
-
-'''
-@TODO implement endpoint
-    GET /drinks-detail
-        it should require the 'get:drinks-detail' permission
-        it should contain the drink.long() data representation
-    returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
-        or appropriate status code indicating reason for failure
-'''
-
+@api.route('/drinks-detail')
+@requires_auth('get:drinks-detail')
+def drinks_detail(_):
+    return jsonify({
+        'drinks': [drink.long() for drink in Drink.query],
+        'success': True
+    }), 200
 
 '''
 @TODO implement endpoint
