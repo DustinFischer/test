@@ -1,4 +1,6 @@
 import os
+from contextlib import contextmanager
+
 from sqlalchemy import Column, String, Integer
 from flask_sqlalchemy import SQLAlchemy
 import json
@@ -8,6 +10,19 @@ project_dir = os.path.dirname(os.path.abspath(__file__))
 database_path = "sqlite:///{}".format(os.path.join(project_dir, database_filename))
 
 db = SQLAlchemy()
+
+
+@contextmanager
+def db_session():
+    """Provide a transactional scope around a series of operations."""
+    session = db.session
+    try:
+        yield session
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
 
 
 def setup_db(app):
