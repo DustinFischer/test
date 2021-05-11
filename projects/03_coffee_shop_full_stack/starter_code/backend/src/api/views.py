@@ -65,7 +65,10 @@ def create_drink(_):
         with db_session():
             drink = Drink(**result)
             drink.insert()
-            return jsonify(drink.long())
+            return jsonify({
+                'success': True,
+                'drinks': drink.long()
+            }), 200
     except:
         abort(422)
 
@@ -97,7 +100,10 @@ def update_drink(_, drink_id):
             for key, value in result.items():
                 setattr(drink, key, value)
             drink.update()
-            return jsonify(drink.long())
+            return jsonify({
+                'success': True,
+                'drinks': [drink.long()]
+            }), 200
     except:
         abort(422)
 
