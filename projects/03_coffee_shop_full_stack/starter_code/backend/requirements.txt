@@ -21,4 +21,5 @@ Flask-Cors==3.0.8
 typed-ast
 python-dotenv
 flask-marshmallow
+flake8
 

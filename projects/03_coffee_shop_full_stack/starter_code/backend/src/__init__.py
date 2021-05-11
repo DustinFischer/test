@@ -1,18 +1,14 @@
+from config import Config
 from flask import Flask, jsonify
 from flask_cors import CORS
 
-from config import Config
 from .database.models import setup_db
-
-
-from . import api
-from . import database
 
 
 def create_app(config_class=None):
     # create and configure the app
     app = Flask(__name__)
-    # Configure the app
+    # Configure the appa
     app.config.from_object(config_class or Config)
     # Setup the db
     setup_db(app)
@@ -26,8 +22,10 @@ def create_app(config_class=None):
 
     @app.after_request
     def after_request(response):
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,true')
-        response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS')
+        response.headers.add('Access-Control-Allow-Headers',
+                             'Content-Type,Authorization,true')
+        response.headers.add('Access-Control-Allow-Methods',
+                             'GET,POST,PATCH,DELETE,OPTIONS')
         return response
 
     @app.route('/')

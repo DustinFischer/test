@@ -61,7 +61,8 @@ def create_drink(_):
 
     # Create the drink
     try:
-        result['recipe'] = json.dumps(result['recipe'])  # JSON serialize recipe
+        # JSON serialize recipe
+        result['recipe'] = json.dumps(result['recipe'])
         with db_session():
             drink = Drink(**result)
             drink.insert()
@@ -69,7 +70,7 @@ def create_drink(_):
                 'success': True,
                 'drinks': drink.long()
             }), 200
-    except:
+    except Exception:
         abort(422)
 
 
@@ -94,7 +95,8 @@ def update_drink(_, drink_id):
     # Update the relevant fields
     try:
         if result.get('recipe', None):
-            result['recipe'] = json.dumps(result['recipe'])  # JSON serialize recipe
+            # JSON serialize recipe
+            result['recipe'] = json.dumps(result['recipe'])
         with db_session():
             # Update the fields
             for key, value in result.items():
@@ -104,7 +106,7 @@ def update_drink(_, drink_id):
                 'success': True,
                 'drinks': [drink.long()]
             }), 200
-    except:
+    except Exception:
         abort(422)
 
 
@@ -117,7 +119,7 @@ def delete_drink(_, drink_id):
     try:
         with db_session():
             drink.delete()
-    except:
+    except Exception:
         abort(500)
 
     return jsonify({}), 204

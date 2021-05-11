@@ -1,9 +1,9 @@
+import json
 import os
 from contextlib import contextmanager
 
 from sqlalchemy import Column, String, Integer
 from flask_sqlalchemy import SQLAlchemy
-import json
 
 database_filename = "database.db"
 project_dir = os.path.dirname(os.path.abspath(__file__))
